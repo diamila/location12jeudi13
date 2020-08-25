@@ -32,6 +32,11 @@
                             <p class="m-0" t-field="o.reference"/>
                         </div>
                          <div class="col-auto mw-100 mb-2">
+                          <strong>Condition payement:</strong>
+                             <p class="m-0" t-field="o.objet"/>
+                         </div>
+
+                         <div class="col-auto mw-100 mb-2">
                           <strong>mois du loyer:</strong>
                              <p class="m-0" t-field="o.mois_payee"/>
                          </div>

@@ -24,6 +24,14 @@
              <attribute name="domain" >[('active_potenctiel','=',False), ('customer','=',True), ('parent_id', '=', False)]</attribute>
           </xpath>
 
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+             <attribute name="options" >{'no_create': True}</attribute>
+          </xpath>
+
+           <xpath expr="//field[@name='user_id']" position="attributes">
+               <attribute name="string" >Comptable</attribute>
+          </xpath>
+
             <!--
           <xpath expr="//field[@name='partner_id']" position="before">
             <field name="bailleur_id"/>
@@ -49,6 +57,8 @@
                <attribute name="string" >Prix location</attribute>
           </xpath>
 
+          <!--
+
           <xpath expr="//field[@name='order_line']/tree/field[@name='qty_delivered']" position="after">
                <field name="mois_payee_c" placeholder="choisi le mois"></field>
            </xpath>
@@ -56,6 +66,7 @@
            <xpath expr="//field[@name='order_line']/tree/field[@name='mois_payee_c']" position="attributes">
                     <attribute name="editable"/>
                 </xpath>
+          -->
 
       </field>
     </record>
@@ -81,7 +92,7 @@
       </field>
     </record>
 
-      <!--__________________Views___account_invoice_view.xml_____________-->
+      <!--__________________form___account_invoice_view.xml_____________-->
       <!--heritage du module account.invoice (heritage facture)-->
       <record id="account_invoice_inherit" model="ir.ui.view">
       <field name="name">account.invoice.inherit</field>
@@ -102,6 +113,14 @@
            <xpath expr="//field[@name='date_invoice']" position="before">
                <field name="mois_payee" placeholder="choisi le mois"></field>
            </xpath>
+            <!--
+            <xpath expr="//field[@name='user_id']" position="after">
+               <field name="objet_paiement" placeholder="choisi le mois"></field>
+           </xpath>
+           -->
+           <xpath expr="//field[@name='user_id']" position="attributes">
+               <attribute name="string" >Comptable</attribute>
+          </xpath>
 
 
 
@@ -145,7 +164,46 @@
                </xpath>
             </field>
         </record>
+        -->
+
+         <!--modification de la vue sale.order tree -->
+      <record model="ir.ui.view" id="account_sinvoice_tree">
+            <field name="name">account.invoice.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree_with_onboarding"/>
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='user_id']" position="attributes">
+               <attribute name="string" >Comptable</attribute>
+          </xpath>
+            </field>
+        </record>
 -->
+
+       <!--modification de la vue sale.order tree -->
+      <record model="ir.ui.view" id="sale_order_tree">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='user_id']" position="attributes">
+               <attribute name="string" >Comptable</attribute>
+          </xpath>
+            </field>
+        </record>
+
+
+       <!--modification de la vue sale.order commande tree -->
+      <record model="ir.ui.view" id="sale_order_tree">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='user_id']" position="attributes">
+               <attribute name="string" >Comptable</attribute>
+          </xpath>
+            </field>
+        </record>
+
 
       <!--ACTION-->
 
@@ -193,7 +251,7 @@
         </record>
 
 
-         <menuitem id="rapport_menu" name="Rapports"
+         <menuitem id="rapport_menu" name="RAPPORTS"
                   parent="rental_app_menu" sequence="8"/>
 
         <menuitem id="rapport_rapport_menu" name="Rapport de paiements"
@@ -209,6 +267,28 @@
                   parent="rapport_menu"
                   action="list_action_account" sequence="3"/>
         -->
+
+
+                 <!--__________________form___account_invoice_view.xml_____________-->
+      <!--heritage du module account.invoice (heritage facture)-->
+      <record id="account_invoice_inherit_form" model="ir.ui.view">
+      <field name="name">account.invoice.inherit_form</field>
+      <field name="model">account.invoice</field>
+      <field name="inherit_id" ref="account.invoice_form"/>
+      <field name="arch" type="xml">
+           <xpath expr="//field[@name='mois_payee']" position="before">
+               <field name="objet" placeholder="choisi l/'objet"></field>
+           </xpath>
+
+            <xpath expr="//field[@name='mois_payee']" position="attributes">
+               <attribute name="required">True</attribute>
+          </xpath>
+      </field>
+    </record>
+
+
+
+
 
   </data>
 </odoo>

@@ -44,3 +44,7 @@ class Contact(models.Model):
     telephone_contact = fields.Char(string="Téléphone", required=True)
     email_contact = fields.Char(string="E-mail")
     notes_contact = fields.Text(string="Notes")
+
+
+
+

@@ -23,9 +23,12 @@ class BienNormal(models.Model):
     Date = fields.Date()
     nbre_tour = fields.Integer(string="niveau", default=1)
     ameublement = fields.Char(string="ameublement")
-    reference = fields.Char(string="Référence ameublement")
+
+
+
 
     #contrat = fields.Many2one('lb.location', ondelete='cascade', string="Contrat lié au bien")
+
 
 
 
@@ -35,14 +38,31 @@ class BienNormal(models.Model):
     type_id = fields.Many2one('lb.type', ondelete='cascade', string="Type Biens")
     gestionnaire_id = fields.Many2one('lb.gestionnaire', ondelete='cascade', string="gestionnaire Immeuble", store=True)
     bailleur_id = fields.Many2one('lb.bailleur', ondelete='cascade', string="Bailleur", store=True)
-    chambres = fields.Char(string="Chambres")
-    salles_bain = fields.Char(string="Salles De Bain")
-    parking = fields.Char(string="Parking")
-    oriente_vers = fields.Char(string="orienté vers", default='Ouest')
+
+    chambres = fields.Float(string="Nombre Chambres", default=1)
+    salons = fields.Float(string="Nbre Salons", default=1)
+    cuisines = fields.Float(string="Nbre Cuisines", default=1)
+    toilette = fields.Float(string="Nbre Toilettes", default=1)
+    cour = fields.Float(string="espace familiale", default=1)
+
+    salles_bain = fields.Char(string="Nbre Salles De Bain")
+    parking = fields.Char(string="Nbre Parking")
+    balcon = fields.Char(string="Nbre balcon")
+    jardin = fields.Boolean(default=False, string="Jardin")
+    ascenseur = fields.Boolean(default=False, string="ascenseur")
+    g_electroge = fields.Boolean(default=False, string="Groupe Electrogène")
+
+
+    oriente_vers = fields.Char(string="Position", default='Bordure route principale')
     # compte_revenu = fields.Many2one('lb.revenu', ondelete='cascade', string="Compte de Revenu")
     # compte_depense = fields.Many2one('ldu Bien")
-    adresse = fields.Many2one('lb.quartier')
+
+    rue = fields.Char(string="Rue")
+
+    adresse = fields.Many2one('lb.quartier', string="quartier")
+
     ville = fields.Many2one('lb.ville')
+
     pays = fields.Many2one('res.country', string="Pays", default=_get_default_country)
 
     notes = fields.Text(string="Notes")
@@ -53,11 +73,7 @@ class BienNormal(models.Model):
                                  index=1)
     currency_id = fields.Many2one('res.currency', 'Currency', compute='_compute_currency_id')
 
-    _sql_constraints = [
-        ('reference_unique',
-         'UNIQUE(reference)',
-         "La référence du bien doit être unique"),
-    ]
+
 
     # 2 fonctions pour l'image attaché
     def _compute_attached_docs_count(self):
@@ -107,7 +123,7 @@ class BienNormal(models.Model):
     # champs: lien avec les information du bien
     history_ids = fields.Many2many('lb.history', string="history")
     plus_proche_ids = fields.Many2many('lb.lieu', string="lieu plus proche")
-    sous_propriete_ids = fields.Many2many('lb.sous_propriete', string="composant/sous_propriété")
+    sous_propriete_ids = fields.Many2many('lb.sous_propriete', string="détail piéce")
 
     # champs: Plans d'étage, photos et documents
     plan_ids = fields.Many2many('lb.plan_etage', string="plan")
@@ -154,6 +170,7 @@ class BienNormal(models.Model):
         # ('ferme', 'Fermé'),
     #  ], string='Status', related='etat.state')
 
+
     #open maintenance
     maintenance_count = fields.Integer(string='Maintenances', compute='get_maintenance_count')
 
@@ -173,22 +190,23 @@ class BienNormal(models.Model):
         count = self.env['maintenance.request'].search_count([('bien_loue', '=', self.id)])
         self.maintenance_count = count
 
-    #lregistrement lier a c bien
-    def get(self):
-        appointments = self.env['lb.location'].search([('bien_loue', '=', self.id)])[-1]
-        for rec in appointments:
-            print("Appointment Name", rec.state)
+    #etat = fields.Char(compute='_onchangeEtat')
 
+    etat = fields.Selection([
+        ('draft', 'Bien Disponible'),
+        ('confirm', 'Bien En location'),
+        ('ferme', 'Bien Disponible'),
+    ], compute='_onchangeEtat')
 
-    etat = fields.Char(compute='_onchangeEtat')
-
-    # onchange handler
     @api.onchange('bien_loue')
     def _onchangeEtat(self):
         # récuperer la dernier valeur du modele location et  (state)
-        appointments = self.env['lb.location'].search([('bien_loue', '=', self.id)])[-1]
-        for rec in appointments:
-            self.etat = rec.state
+        appointments = self.env['lb.location'].search([('bien_loue', '=', self.id)], order='id desc', limit=1)
+        if appointments:
+            for rec in appointments:
+                self.etat = rec.state
+        else:
+            self.etat = 'ferme'
 
 
 
@@ -230,10 +248,10 @@ class plus_proche(models.Model):
 
 class sous_propriete(models.Model):
     _name = 'lb.sous_propriete'
-    _rec_name = 'name_chambre'
+    _rec_name = 'type_chambre'
 
-    name_chambre = fields.Char('composant bien')
-    type_chambre = fields.Selection([('salon', 'Salon'), ('chambre_parent', 'Chambre Parent'), ('chambre_enfant', 'Chambre Enfant'), ('chambre_visiteur', 'Chambre Visiteur'), ('cuisine', 'Cuisine'), ('toilette', 'Toilette'), ('cour', 'espace familiale')])
+
+    type_chambre = fields.Selection([('salon', 'Salon'), ('chambre_parent', 'Chambre Parent'), ('chambre_enfant', 'Chambre Enfant'), ('chambre_visiteur', 'Chambre Visiteur'), ('cuisine', 'Cuisine'), ('toilette', 'Toilette'), ('cour', 'espace familiale')], string="type piéce")
     height = fields.Float(string="height(m)", default=0.0)
     width = fields.Float(string="width(m)", default=0.0)
 
@@ -271,3 +289,45 @@ class Maintenance(models.Model):
 
     cout_maintenance = fields.Float(string="coût maintenance", default=0.0)
     bien_loue = fields.Many2one('product.template', required=True)
+
+
+
+
+class CRM(models.Model):
+    _inherit = 'crm.lead'
+
+    type_propect = fields.Selection([('location', 'Location'), ('gerance', 'Gérance'), ('location', 'Location + Gérance')])
+
+
+    active_potenctiels = fields.Boolean('Peut étre un locataire potenciel' ,related='partner_id.active_potenctiel')
+    #test = fields.Boolean(compute='create_locataire')
+
+    @api.one
+    def terminer_basculer(self):
+        if self.partner_id.active_potenctiel == True:
+            self.partner_id.active_potenctiel = not self.partner_id.active_potenctiel
+            return True
+        else:
+            self.partner_id.active_potenctiel = self.partner_id.active_potenctiel
+
+
+
+    def locataire(self):
+        return {
+                "type": "ir.actions.act_url",
+                "url": 'http://localhost:8069/web#action=1116&model=res.partner&view_type=kanban&menu_id=911'}
+
+    @api.onchange('active_potenctiels')
+    def _check_location(self):
+        if self.active_potenctiels == False:
+            return {
+                'warning': {
+                    'title': "Bravo",
+                    'message': "Ce prospect est maintenant un locataire",
+                },
+            }
+
+
+
+
+

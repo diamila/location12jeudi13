@@ -61,10 +61,27 @@ class facture(models.Model):
                                   string="paiement du mois")
 
 
+
+
+    objet_payement = fields.Selection([('avance', 'Avance'), ('loyer', 'Loyer du mois'), ('pénalité', 'Pénalités'),
+                                       ('autre paiements', 'Autres Paiements')], string="Objet du Paiement")
+
+
 class order(models.Model):
     _inherit = 'account.invoice.line'
 
     date_payement =  fields.Date(string='Date payement', required=True,default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+
+
+#heritage pour la facture
+class facture_suite(models.Model):
+    _inherit = 'account.invoice'
+
+    objet = fields.Selection([('avance', 'Avance'), ('loyer', 'Loyer du mois'), ('pénalité', 'Pénalités'),
+                                       ('autre paiements', 'Autres Paiements')], string="Objet du Paiement", required=True)
+
+
 
 
 

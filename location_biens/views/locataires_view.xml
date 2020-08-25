@@ -2,6 +2,7 @@
 <odoo>
   <data>
 
+
          <!-- ResPartner customization -->
 
     <record id="locataire_custom_fields" model="ir.ui.view">
@@ -35,6 +36,11 @@
         <xpath expr="//page[1]" position="attributes">
           <attribute name="invisible">1</attribute>
         </xpath>
+
+
+
+
+
         <xpath expr="//page[@name='internal_notes']" position="before">
              <page string="Contact">
                 <field name="enregistrement_contact">
@@ -56,6 +62,8 @@
              </page>
             </notebook>
       </field>
+
+
     </record>
 
         <!-- Locataires tree view -->
@@ -133,7 +141,7 @@
         </record> -->
 
 
-        <menuitem id="locataire_menu" name="Locataires"
+        <menuitem id="locataire_menu" name="LOCATAIRES"
                   parent="rental_app_menu" sequence="4"/>
 
         <menuitem id="locataire_locataire_menu" name="Locataires"

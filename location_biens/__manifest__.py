@@ -17,7 +17,7 @@ Module pour la gestion locative des biens immobiliers
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','mail','portal','resource','analytic','sale','product'],
+    'depends': ['base','mail','portal','resource','analytic','sale','product','crm'],
 
     # always loaded
     'data': [
@@ -33,10 +33,15 @@ Module pour la gestion locative des biens immobiliers
         'reports/contratpdf_templete.xml',
         'reports/report.xml',
         'reports/sale_report_inherit.xml',
+        'reports/contratpdf_close.xml',
+        'wizard/create_locataire.xml',
+        'wizard_maintenance/create_maintenance.xml',
+        'views/locataire_p.xml',
+        'views/assets.xml',
+
     ],
     # only loaded in demonstration mode
     'demo': [
-        'demo/demo.xml',
-    ],
+        'demo/demo.xml',    ],
 }
 

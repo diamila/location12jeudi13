@@ -8,4 +8,13 @@
         name="location_biens.report_contrat"
         file="location_biens.report_contrat"/>
 
+
+     <report
+        id="contrat_card_close"
+        string="Contrat close"
+        model="lb.location"
+        report_type="qweb-pdf"
+        name="location_biens.report_close"
+        file="location_biens.report_close"/>
+
 </odoo>

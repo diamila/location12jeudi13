@@ -90,8 +90,8 @@
         </record>
 
 
-        <menuitem id="villes_quartiers_menu" name="Villes et Quartiers"
-                  parent="rental_app_menu" sequence="1"/>
+        <menuitem id="villes_quartiers_menu" name="VILLES QUARTIERS"
+                  parent="rental_app_menu" sequence="3"/>
 
         <menuitem id="ville_menu" name="Villes"
                   parent="villes_quartiers_menu"
